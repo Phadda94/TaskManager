@@ -1,0 +1,26 @@
+input {
+    background-color: rgb(215, 177, 177);
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+table {
+    background-color: rgb(225, 217, 240);
+    visibility: hidden;
+    padding: 20px 30px;
+    width: 100%;
+    margin: auto;
+}
+
+td {
+    border: 1px solid black;
+    padding: 4px;
+}
+
+
+.checked {
+    text-decoration: line-through;
+    color:white;
+    background-color: green;
+}
