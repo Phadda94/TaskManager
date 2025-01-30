@@ -1,65 +1,119 @@
-const activity = document.querySelector('#activity');
-const day = document.querySelector('#day');
-const hour = document.querySelector('#hour');
-
-const tableBox = document.querySelector('#table');
-tableBox.style.visibility = 'hidden';
-
+const activityInput = document.querySelector('#activity');
+const dayInput = document.querySelector('#day');
 const activityButton = document.querySelector('#activity-button');
+const tableBox = document.querySelector('#table');
 
 let activities = [];
 
-// Funzione per aggiungere un'attività
+
+// Function to add an activity
 function addActivity() {
-    if (!activity.value || !day.value || !hour.value) {
-        alert('Inserisci tutti i campi (Attività, Giorno, Ora)');
-        return;
-    }
-
-    const newActivity = {
-        task: activity.value,
-        dateTime: new Date(`${day.value}T${hour.value}`),
-        date: day.value,
-        time: hour.value
-    };
-
-    activities.push(newActivity);
-
-    // Ordina le attività per data e ora
-    activities.sort((a, b) => a.dateTime - b.dateTime);
-
+  if (!activityInput.value || !dayInput.value || !hourDropdown.value) {
+    alert('Please fill in all fields (Activity, Day, Hour)');
+    return;
+  }
+  
+  const newActivity = {
+    id: Date.now(), // Unique identifier for each activity
+    task: activityInput.value,
+    date: dayInput.value,
+    time: hourDropdown.value,
+    dateTime: new Date(`${dayInput.value}T${hourDropdown.value}`)
+  };
+  
+  activities.push(newActivity);
+  activities.sort((a, b) => a.dateTime - b.dateTime);
+  
+  setTimeout(() => {
     renderActivities();
-
-    activity.value = '';
-    day.value = '';
-    hour.value = '';
+    console.log("Activities after render (inside setTimeout):", activities);
+  }, 200);
+  
+  activityInput.value = '';
+  dayInput.value = '';
+  hourDropdown.selectedIndex = 0;
 }
 
-// Funzione per aggiornare la tabella
+
+
+// Function to render activities in the table
 function renderActivities() {
-    tableBox.innerHTML = ''; // Pulizia tabella
-
-    activities.forEach(activity => {
-        const newRow = document.createElement('tr');
-        const newCell = document.createElement('td');
-        const newCellDay = document.createElement('td');
-        const newCellHour = document.createElement('td');
-
-        newCell.textContent = activity.task;
-        newCellDay.textContent = activity.date;
-        newCellHour.textContent = activity.time;
-
-        newRow.appendChild(newCell);
-        newRow.appendChild(newCellDay);
-        newRow.appendChild(newCellHour);
-
-        tableBox.appendChild(newRow);
+  tableBox.innerHTML = `
+  <tr>
+  <th>Activity</th>
+  <th>Day</th>
+  <th>Hour</th>
+  <th>Completed</th>
+  <th>Delete</th>
+  </tr>  
+  `;
+  
+  activities.forEach(activity => {
+    const newRow = document.createElement('tr');
+    const taskCell = document.createElement('td');
+    const dateCell = document.createElement('td');
+    const timeCell = document.createElement('td');
+    
+    taskCell.textContent = activity.task;
+    dateCell.textContent = activity.date;
+    timeCell.textContent = activity.time;
+    
+    // Checkbox for marking the task as completed
+    const checkCell = document.createElement('td');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.addEventListener('change', () => {
+      newRow.classList.toggle('checked', checkbox.checked);
     });
-
-    tableBox.style.visibility = activities.length > 0 ? 'visible' : 'hidden';
+    checkCell.appendChild(checkbox);
+    
+    // Delete button
+    const deleteCell = document.createElement('td');
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = '🗑️';
+    deleteButton.addEventListener('click', () => deleteActivity(activity.id));
+    deleteCell.appendChild(deleteButton);
+    
+    newRow.appendChild(taskCell);
+    newRow.appendChild(dateCell);
+    newRow.appendChild(timeCell);
+    newRow.appendChild(checkCell);
+    newRow.appendChild(deleteCell);
+    tableBox.appendChild(newRow);
+  });
+  
+  tableBox.style.visibility = activities.length ? 'visible' : 'hidden';
 }
 
+
+
+// Function to delete an activity by id
+function deleteActivity(id) {
+  activities = activities.filter(activity => activity.id !== id);
+  renderActivities();
+}
+
+
+
+// Event listener for adding an activity
 activityButton.addEventListener('click', addActivity);
+console.log(activities);
+
+
+
+// Time options
+const hourDropdown = document.querySelector('#hour');
+for (let h = 0; h < 24; h++) {
+  for (let m = 0; m < 60; m += 30) {
+    const hour = h.toString().padStart(2, '0');
+    const minute = m.toString().padStart(2, '0');
+    const timeString = `${hour}:${minute}`;
+    const option = document.createElement('option');
+    option.value = timeString;
+    option.textContent = timeString;
+    hourDropdown.appendChild(option);
+  }
+}
 
 
 
@@ -86,4 +140,4 @@ function loadActivities() {
     tableBox.appendChild(newRow);
   });
 }
-*/  
+*/
