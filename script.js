@@ -23,12 +23,18 @@ function addActivity() {
   
   activities.push(newActivity);
   activities.sort((a, b) => a.dateTime - b.dateTime);
-  renderActivities();
+  
+  setTimeout(() => {
+    renderActivities();
+    console.log("Activities after render (inside setTimeout):", activities);
+  }, 200);
   
   activityInput.value = '';
   dayInput.value = '';
-  hourDropdown.value = '';
+  hourDropdown.selectedIndex = 0;
 }
+
+
 
 // Function to render activities in the table
 function renderActivities() {
@@ -79,19 +85,26 @@ function renderActivities() {
   tableBox.style.visibility = activities.length ? 'visible' : 'hidden';
 }
 
+
+
 // Function to delete an activity by id
 function deleteActivity(id) {
   activities = activities.filter(activity => activity.id !== id);
   renderActivities();
 }
 
+
+
 // Event listener for adding an activity
 activityButton.addEventListener('click', addActivity);
+console.log(activities);
 
-// Populate dropdown with time options
+
+
+// Time options
 const hourDropdown = document.querySelector('#hour');
 for (let h = 0; h < 24; h++) {
-  for (let m = 0; m < 60; m += 10) {
+  for (let m = 0; m < 60; m += 30) {
     const hour = h.toString().padStart(2, '0');
     const minute = m.toString().padStart(2, '0');
     const timeString = `${hour}:${minute}`;
@@ -101,6 +114,8 @@ for (let h = 0; h < 24; h++) {
     hourDropdown.appendChild(option);
   }
 }
+
+
 
 /* ################# STORAGE FUNCTIONS ################
 
