@@ -1,15 +1,40 @@
-input {
+body {
+    background-color: rgb(39, 36, 53);
+    font-family: monospace;
+}
+
+h1 {
+    width: fit-content;
+    margin: auto;
+    color:rgb(225, 217, 240)
+
+}
+
+#input-container {
+    width: fit-content;
+}
+
+.input {
     background-color: rgb(215, 177, 177);
     padding: 10px;
     margin: 10px;
     border-radius: 10px;
 }
 
+#activity-button {
+    background-color: green;
+    border: 2px solid white;
+}
+
+#activity-button:hover {
+    cursor: pointer;
+}
+
 table {
     background-color: rgb(225, 217, 240);
     visibility: hidden;
     padding: 20px 30px;
-    width: 100%;
+    width: 80%;
     margin: auto;
 }
 

@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enhanced To-Do List</title>
+  <title>To-Do List</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Enhanced To-Do List</h1>
-  <input id="activity" type="text" placeholder="Enter activity" />
-  <input id="day" type="date" />
-  <select id="hour"></select>
-  <button id="activity-button">Add Activity</button>
-
+  <h1>To-Do List</h1>
+  <div id="input-container">
+    <input id="activity" class="input" type="text" placeholder="Enter activity" />
+    <input id="day" class="input" type="date" />
+    <select id="hour" class="input"></select>
+    <button id="activity-button" class="input">Add Activity</button>
+  </div>
   <table id="table">
     <tr>
       <th>Activity</th>
