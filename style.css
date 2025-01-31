@@ -43,7 +43,7 @@ h1 {
 #activity-button {
     background-color: var(--green);
     color: var(--black);
-    border: 2px solid white;
+    border: 2px solid var(--black);
 }
 
 #activity-button:hover {
