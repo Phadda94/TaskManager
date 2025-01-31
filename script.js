@@ -25,6 +25,7 @@ function addActivity() {
     task: activityInput.value,
     date: dayInput.value,
     time: hourDropdown.value,
+    completed: false, // Stato completato inizialmente false
     dateTime: new Date(`${dayInput.value}T${hourDropdown.value}`)
   };
 
@@ -41,7 +42,6 @@ function addActivity() {
   dayInput.value = '';
   hourDropdown.selectedIndex = 0;
 }
-
 
 // Funzione per salvare gli utenti nel localStorage
 function saveUsers() {
@@ -79,11 +79,21 @@ function renderActivities() {
     const checkCell = document.createElement('td');
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.id = 'checkbox';
+    checkbox.id = `checkbox-${activity.id}`; // Assegna un id univoco
+    checkbox.checked = activity.completed; // Mantieni stato del completamento
     checkCell.id = 'checkcell';
+
+    // Mantieni lo stile applicato se il checkbox è spuntato
+    if (checkbox.checked) {
+      newRow.classList.add('checked');
+    }
+
     checkbox.addEventListener('change', () => {
+      activity.completed = checkbox.checked; // Aggiorna lo stato dell'attività
+      saveUsers();
       newRow.classList.toggle('checked', checkbox.checked);
     });
+
     checkCell.appendChild(checkbox);
 
     const deleteCell = document.createElement('td');
@@ -164,8 +174,6 @@ function promptLogin() {
   }
 }
 
-
-
 function createUserNameBox() {
   const usernameBox = document.querySelector('#username-box');
   
@@ -197,8 +205,6 @@ function createUserNameBox() {
     loginBox.addEventListener('click', promptLogin);  // Passa la funzione senza chiamarla subito
   }
 }
-
-
 
 function deleteUser() {
   // Rimuove l'utente attualmente loggato

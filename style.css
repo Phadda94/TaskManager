@@ -53,7 +53,6 @@ h1 {
     cursor: pointer;
     color: var(--green);
     background-color: #1F1F1F;
-    font-size: 0.8rem;
     animation: activity .4s;
 }
 
@@ -64,19 +63,54 @@ table {
     width: 60%;
     margin: auto;
     margin-top: 5%;
-    border: 4px solid black;
+    border: 2px solid black;
+    font-weight: 700;
+    border-radius: 20px 0;
 }
 
 td {
-    border: 1px solid var(--black);
-    padding: 4px;
+    border: 2px solid var(--black);
+    padding: 8px;
+    
 }
 
-#checkbox {
+input[type="checkbox"] {
+    appearance: none;
     display: flex;
     margin: auto;
+    width: 20px;
+    height: 20px;
+    background-color: var(--white);
+    border: 2px solid var(--black);
+    border-radius: 4px;
     cursor: pointer;
-}
+    position: relative;
+  }
+  
+  /* Aggiungi la spunta personalizzata */
+  input[type="checkbox"]::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 15px;
+    border: solid var(--green);
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    left: 8px;
+    bottom: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  
+  input[id^="checkbox-"]:checked {
+    background-color: var(--black);
+    border: 2px solid var(--white);
+  }
+
+  /* Quando il checkbox è spuntato */
+  input[type="checkbox"]:checked::after {
+    opacity: 1;
+  }
 
 #checkcell {
     
@@ -84,7 +118,7 @@ td {
 
 .checked {
     text-decoration: line-through;
-    color: var(--white);
+    color: rgb(88, 88, 88);
     background-color: var(--black);
 }
 
