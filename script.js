@@ -56,7 +56,7 @@ function renderActivities() {
   <th>Activity</th>
   <th>Day</th>
   <th>Hour</th>
-  <th>Completed</th>
+  <th>Check</th>
   <th>Delete</th>
   </tr>  
   `;
@@ -79,6 +79,8 @@ function renderActivities() {
     const checkCell = document.createElement('td');
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
+    checkbox.id = 'checkbox';
+    checkCell.id = 'checkcell';
     checkbox.addEventListener('change', () => {
       newRow.classList.toggle('checked', checkbox.checked);
     });
