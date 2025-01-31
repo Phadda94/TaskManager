@@ -2,42 +2,55 @@ const activityInput = document.querySelector('#activity');
 const dayInput = document.querySelector('#day');
 const activityButton = document.querySelector('#activity-button');
 const tableBox = document.querySelector('#table');
+const hourDropdown = document.querySelector('#hour');
+let currentUser = null;
 
-let activities = [];
+// Carica utenti dal localStorage
+let users = JSON.parse(localStorage.getItem('users')) || [];
 
-
-// Function to add an activity
+// Funzione per aggiungere un'attività
 function addActivity() {
+  if (!currentUser) {
+    alert('You must log in first!');
+    return;
+  }
+
   if (!activityInput.value || !dayInput.value || !hourDropdown.value) {
     alert('Please fill in all fields (Activity, Day, Hour)');
     return;
   }
-  
+
   const newActivity = {
-    id: Date.now(), // Unique identifier for each activity
+    id: Date.now(),
     task: activityInput.value,
     date: dayInput.value,
     time: hourDropdown.value,
     dateTime: new Date(`${dayInput.value}T${hourDropdown.value}`)
   };
-  
-  activities.push(newActivity);
-  activities.sort((a, b) => a.dateTime - b.dateTime);
-  
-  setTimeout(() => {
-    renderActivities();
-    console.log("Activities after render (inside setTimeout):", activities);
-  }, 200);
-  
+
+  const userIndex = users.findIndex(user => user.username === currentUser);
+
+  if (userIndex >= 0) {
+    users[userIndex].activities.push(newActivity);
+    users[userIndex].activities.sort((a, b) => a.dateTime - b.dateTime);
+    saveUsers();
+  }
+
+  renderActivities();
   activityInput.value = '';
   dayInput.value = '';
   hourDropdown.selectedIndex = 0;
 }
 
 
+// Funzione per salvare gli utenti nel localStorage
+function saveUsers() {
+  localStorage.setItem('users', JSON.stringify(users));
+}
 
-// Function to render activities in the table
+// Funzione per rendere visibili le attività
 function renderActivities() {
+  const user = users.find(user => user.username === currentUser);
   tableBox.innerHTML = `
   <tr>
   <th>Activity</th>
@@ -47,18 +60,22 @@ function renderActivities() {
   <th>Delete</th>
   </tr>  
   `;
-  
-  activities.forEach(activity => {
+
+  if (!user || !user.activities.length) {
+    tableBox.style.visibility = 'hidden';
+    return;
+  }
+
+  user.activities.forEach(activity => {
     const newRow = document.createElement('tr');
     const taskCell = document.createElement('td');
     const dateCell = document.createElement('td');
     const timeCell = document.createElement('td');
-    
+
     taskCell.textContent = activity.task;
     dateCell.textContent = activity.date;
     timeCell.textContent = activity.time;
-    
-    // Checkbox for marking the task as completed
+
     const checkCell = document.createElement('td');
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -66,14 +83,14 @@ function renderActivities() {
       newRow.classList.toggle('checked', checkbox.checked);
     });
     checkCell.appendChild(checkbox);
-    
-    // Delete button
+
     const deleteCell = document.createElement('td');
     const deleteButton = document.createElement('button');
-    deleteButton.textContent = '🗑️';
+    deleteButton.classList.add('delete-button');
+    deleteButton.innerHTML = '<span class="material-symbols-outlined">delete</span>';
     deleteButton.addEventListener('click', () => deleteActivity(activity.id));
     deleteCell.appendChild(deleteButton);
-    
+
     newRow.appendChild(taskCell);
     newRow.appendChild(dateCell);
     newRow.appendChild(timeCell);
@@ -81,28 +98,23 @@ function renderActivities() {
     newRow.appendChild(deleteCell);
     tableBox.appendChild(newRow);
   });
-  
-  tableBox.style.visibility = activities.length ? 'visible' : 'hidden';
+
+  tableBox.style.visibility = 'visible';
 }
 
-
-
-// Function to delete an activity by id
 function deleteActivity(id) {
-  activities = activities.filter(activity => activity.id !== id);
+  const userIndex = users.findIndex(user => user.username === currentUser);
+  if (userIndex >= 0) {
+    users[userIndex].activities = users[userIndex].activities.filter(activity => activity.id !== id);
+    saveUsers();
+  }
   renderActivities();
 }
 
-
-
-// Event listener for adding an activity
+// Event listener per aggiungere attività
 activityButton.addEventListener('click', addActivity);
-console.log(activities);
 
-
-
-// Time options
-const hourDropdown = document.querySelector('#hour');
+// Aggiunta opzioni per l'orario
 for (let h = 0; h < 24; h++) {
   for (let m = 0; m < 60; m += 30) {
     const hour = h.toString().padStart(2, '0');
@@ -115,29 +127,89 @@ for (let h = 0; h < 24; h++) {
   }
 }
 
+// Simulazione di login
+function login(username) {
+  currentUser = username;
 
-
-/* ################# STORAGE FUNCTIONS ################
-
-//SAVE ACTIVITIES FUNCTION
-function saveActivity(activityValue) {
-  let activities = JSON.parse(localStorage.getItem('activities')) || [];
-  activities.push(activityValue);
-  localStorage.setItem('activities', JSON.stringify(activities));
-}
-
-//LOAD ACTIVITIES FUNCTION
-function loadActivities() {
-  const activities = JSON.parse(localStorage.getItem('activities')) || [];
-  if (activities.length > 0) {
-    tableBox.style.visibility = 'visible';
+  if (!users.find(user => user.username === currentUser)) {
+    alert("User not found. Registering new user...");
+    users.push({ username: currentUser, activities: [] });
+    saveUsers();
   }
-  activities.forEach(activityValue => {
-    const newRow = document.createElement('tr');
-    const newCell = document.createElement('td');
-    newCell.textContent = activityValue;
-    newRow.appendChild(newCell);
-    tableBox.appendChild(newRow);
-  });
+
+  alert(`Welcome, ${currentUser}!`);
+  renderActivities();
+  createUserNameBox();  // Chiamata per aggiornare il box dell'username
 }
-*/
+
+
+// Simula il login di un utente
+const username = prompt("Enter your username to login:");
+if (username && username.trim()) {
+  login(username);  // Solo se l'utente inserisce un nome
+} else {
+  alert("You must enter a username.");
+  promptLogin()
+}
+
+function promptLogin() {
+  let username = prompt("Enter your username to login:");
+  if (username && username.trim()) {
+    login(username);  // Solo se l'utente inserisce un nome valido
+  } else {
+    alert("You must enter a valid username.");
+    promptLogin();  // Riprova il login
+  }
+}
+
+
+
+function createUserNameBox() {
+  const usernameBox = document.querySelector('#username-box');
+  
+  // Pulisce il contenuto precedente del box (rimuove sia "Login" che il nome utente precedente)
+  usernameBox.innerHTML = '';
+
+  if (currentUser) {  // Se c'è un utente loggato
+    // Crea l'elemento con il nome dell'utente
+    const usernameText = document.createElement('p');
+    usernameText.id = 'username-text';
+    usernameBox.appendChild(usernameText);
+    usernameText.textContent = currentUser;  // Mostra il nome dell'utente
+    
+    const usernameBin = document.createElement('button');
+    usernameBin.innerHTML = '<span class="material-symbols-outlined">delete</span>';
+    usernameBin.id = 'username-bin';
+    usernameBox.appendChild(usernameBin);
+    
+    // Aggiungi l'evento per il pulsante di eliminazione dell'account
+    usernameBin.addEventListener('click', deleteUser);
+  } else {
+    // Se non c'è un utente loggato, aggiungi il testo "Login"
+    const loginBox = document.createElement('p');
+    loginBox.id = 'login-box';
+    loginBox.textContent = 'Login';  // Mostra "Login" quando l'utente non è loggato
+    usernameBox.appendChild(loginBox);
+    
+    // Aggiungi l'evento per il login
+    loginBox.addEventListener('click', promptLogin);  // Passa la funzione senza chiamarla subito
+  }
+}
+
+
+
+function deleteUser() {
+  // Rimuove l'utente attualmente loggato
+  users = users.filter(user => user.username !== currentUser);
+  saveUsers();
+
+  // Aggiungi un messaggio di conferma per il delete
+  alert(`User ${currentUser} has been deleted.`);
+
+  // Rimuove l'elemento dell'username dalla UI
+  currentUser = null;  // Impostiamo currentUser a null per indicare che non siamo più loggati
+  renderActivities();   // Pulisce la lista delle attività
+
+  // Pulisce il box dell'username
+  createUserNameBox();  // Chiamata per aggiornare il box dell'username
+}

@@ -1,12 +1,29 @@
+:root {
+    --black: #1F1F1F;
+    --white: #DEDEDE;
+    --green: #80DB0F;
+}
+
+* {
+    margin: 0;
+}
+
 body {
-    background-color: rgb(39, 36, 53);
-    font-family: monospace;
+    background-color: var(--white);
+    font-family: Poppins;
+    font-weight: 400;
+}
+
+header {
+    background-color: var(--black);
+    display: flex;
+    align-items: center;
 }
 
 h1 {
     width: fit-content;
     margin: auto;
-    color:rgb(225, 217, 240)
+    color: var(--white)
 
 }
 
@@ -15,14 +32,16 @@ h1 {
 }
 
 .input {
-    background-color: rgb(215, 177, 177);
+    background-color: var(--black);
+    color: var(--white);
     padding: 10px;
     margin: 10px;
     border-radius: 10px;
 }
 
 #activity-button {
-    background-color: green;
+    background-color: var(--green);
+    color: var(--black);
     border: 2px solid white;
 }
 
@@ -31,7 +50,7 @@ h1 {
 }
 
 table {
-    background-color: rgb(225, 217, 240);
+    background-color: var(--white);
     visibility: hidden;
     padding: 20px 30px;
     width: 80%;
@@ -39,13 +58,56 @@ table {
 }
 
 td {
-    border: 1px solid black;
+    border: 1px solid var(--black);
     padding: 4px;
 }
 
-
 .checked {
     text-decoration: line-through;
-    color:white;
-    background-color: green;
+    color: var(--white);
+    background-color: var(--black);
+}
+
+.input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    color: #DEDEDE;
+}
+
+#username-box {
+    color: var(--white);
+    position: absolute;
+    display: flex;
+}
+
+#username-text {
+    margin: auto;
+    margin-left: 10%;
+    text-decoration-line:underline;
+    text-decoration-color: var(--green);
+    padding: 5px;
+    cursor: default;
+}
+
+#username-bin {
+    scale: 0.7;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    cursor: pointer;
+}
+
+#login-box {
+    margin-left: 20%;
+    padding: 5px;
+    cursor: pointer;
+    border: 1px solid var(--white);
+    border-radius: 10px 0;
+    transition: .4s;
+}
+
+#login-box:hover {
+    background-color: var(--white);
+    color: var(--black);
+    border-radius: 0 10px;
 }
