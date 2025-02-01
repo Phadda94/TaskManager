@@ -57,22 +57,30 @@ h1 {
 }
 
 table {
+    table-layout: fixed;
+    width: 80%;
     background-color: var(--white);
     visibility: hidden;
     padding: 20px 30px;
-    width: 60%;
     margin: auto;
     margin-top: 5%;
     border: 2px solid black;
     font-weight: 700;
+    font-size: 1.3cqmax;
     border-radius: 20px 0;
 }
 
 td {
     border: 2px solid var(--black);
     padding: 8px;
-    
+    text-align: center;
+    width: 150px; /* oppure un valore ragionevole */
 }
+
+td:nth-child(4) { /* Seleziona specificatamente la cella dei checkbox */
+    width: 50px;
+}
+
 
 input[type="checkbox"] {
     appearance: none;
@@ -100,7 +108,8 @@ input[type="checkbox"] {
     bottom: 4px;
     opacity: 0;
     transition: opacity 0.2s;
-  }
+}
+
   
   input[id^="checkbox-"]:checked {
     background-color: var(--black);
