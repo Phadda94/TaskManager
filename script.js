@@ -5,8 +5,12 @@ const tableBox = document.querySelector('#table');
 const hourDropdown = document.querySelector('#hour');
 let currentUser = null;
 
+
+
 // Carica utenti dal localStorage
 let users = JSON.parse(localStorage.getItem('users')) || [];
+
+
 
 // Funzione per aggiungere un'attività
 function addActivity() {
@@ -20,33 +24,44 @@ function addActivity() {
     return;
   }
 
+  const capitalizedTask = capitalizeFirstLetter(activityInput.value.trim());
+
   const newActivity = {
     id: Date.now(),
-    task: activityInput.value,
+    task: capitalizedTask,
     date: dayInput.value,
     time: hourDropdown.value,
     completed: false, // Stato completato inizialmente false
     dateTime: new Date(`${dayInput.value}T${hourDropdown.value}`)
   };
-
-  const userIndex = users.findIndex(user => user.username === currentUser);
-
+   
+  const userIndex = users.findIndex(user => user.username === currentUser.toLowerCase());
+  
   if (userIndex >= 0) {
     users[userIndex].activities.push(newActivity);
     users[userIndex].activities.sort((a, b) => a.dateTime - b.dateTime);
     saveUsers();
   }
-
+  
   renderActivities();
   activityInput.value = '';
   dayInput.value = '';
   hourDropdown.selectedIndex = 0;
 }
 
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+
+
 // Funzione per salvare gli utenti nel localStorage
 function saveUsers() {
   localStorage.setItem('users', JSON.stringify(users));
 }
+
+
 
 // Funzione per rendere visibili le attività
 function renderActivities() {
@@ -79,19 +94,18 @@ function renderActivities() {
     const checkCell = document.createElement('td');
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.id = `checkbox-${activity.id}`; // Assegna un id univoco
-    checkbox.checked = activity.completed; // Mantieni stato del completamento
-    checkCell.id = 'checkcell';
+    checkbox.id = `checkbox-${activity.id}`;
 
-    // Mantieni lo stile applicato se il checkbox è spuntato
+    // Mantieni lo stato del checkbox e applica lo stile
+    checkbox.checked = !!activity.completed;
     if (checkbox.checked) {
       newRow.classList.add('checked');
     }
 
     checkbox.addEventListener('change', () => {
-      activity.completed = checkbox.checked; // Aggiorna lo stato dell'attività
-      saveUsers();
       newRow.classList.toggle('checked', checkbox.checked);
+      activity.completed = checkbox.checked;  // Salva lo stato del checkbox
+      saveUsers();  // Salva nel localStorage
     });
 
     checkCell.appendChild(checkbox);
@@ -111,8 +125,11 @@ function renderActivities() {
     tableBox.appendChild(newRow);
   });
 
+
   tableBox.style.visibility = 'visible';
 }
+
+
 
 function deleteActivity(id) {
   const userIndex = users.findIndex(user => user.username === currentUser);
@@ -141,7 +158,8 @@ for (let h = 0; h < 24; h++) {
 
 // Simulazione di login
 function login(username) {
-  currentUser = username;
+  // Converti l'username in minuscolo
+  currentUser = username.trim().toLowerCase();
 
   if (!users.find(user => user.username === currentUser)) {
     alert("User not found. Registering new user...");
@@ -151,9 +169,8 @@ function login(username) {
 
   alert(`Welcome, ${currentUser}!`);
   renderActivities();
-  createUserNameBox();  // Chiamata per aggiornare il box dell'username
+  createUserNameBox();
 }
-
 
 // Simula il login di un utente
 const username = prompt("Enter your username to login:");
@@ -167,12 +184,13 @@ if (username && username.trim()) {
 function promptLogin() {
   let username = prompt("Enter your username to login:");
   if (username && username.trim()) {
-    login(username);  // Solo se l'utente inserisce un nome valido
+    login(username.toLowerCase());  // Forza il lowercase anche qui
   } else {
     alert("You must enter a valid username.");
     promptLogin();  // Riprova il login
   }
 }
+
 
 function createUserNameBox() {
   const usernameBox = document.querySelector('#username-box');
